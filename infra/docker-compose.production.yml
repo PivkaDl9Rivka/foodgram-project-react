@@ -12,7 +12,6 @@ services:
     command: cp -r /app/build/. /frontend_static/
     volumes:
       - static_value:/app/result_build/
-    depends_on: backend
 
   db:
     image: postgres:13
