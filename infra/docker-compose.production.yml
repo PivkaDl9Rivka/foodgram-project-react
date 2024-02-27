@@ -18,8 +18,8 @@ services:
     image: foxa26/foodgram_backend
     restart: always
     volumes:
-      - static_value:/app/backend_static/
-      - media_value:/app/backend_media/
+      - static_value:/backend_static
+      - media_value:/backend_media
     depends_on:
       - db
     env_file:
@@ -27,18 +27,17 @@ services:
 
   frontend:
     image: foxa26/frontend_foodgram
+    env_file: .env
     command: cp -r /app/build/. /frontend_static/
     volumes:
-      - static_frontend:/frontend_static
+      - static_value:/frontend_static
 
   nginx:
     image: foxa26/foodgram_gateway
     ports:
       - "8000:80"
     volumes:
-      - static_frontend:/frontend_static
-      - ./docs:/usr/share/nginx/html/api/docs/
-      - static_value:/backend_static/
-      - media_value:/backend_media/
+      - static_value:/backend_static
+      - media_value:/backend_media
     depends_on:
       - backend
