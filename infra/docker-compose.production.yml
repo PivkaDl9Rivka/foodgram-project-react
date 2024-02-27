@@ -1,3 +1,4 @@
+  GNU nano 6.2                                      docker-compose.production.yml
 version: '3.3'
 volumes:
   postgres_data:
@@ -10,7 +11,8 @@ services:
     env_file: .env
     command: cp -r /app/build/. /frontend_static/
     volumes:
-      - static_value:/frontend_static
+      - static_value:/app/result_build/
+    depends_on: backend
 
   db:
     image: postgres:13
