@@ -10,12 +10,13 @@ from django.db.models import Sum
 
 from recipes.models import (Favorite, Subscribe, Ingredient, Recipe,
                             RecipeIngredient, ShoppingCart, Tag)
+from users.models import User
+
 from .serializers import (CustomUserSerializer, IngredientSerializer,
                           RecipeCreateSerializer, RecipeListSerializer,
                           SubscribeRecipeSerializer, SubscribeSerializer,
                           SubscribeUserSerializer, TagSerializer,
                           ShoppingCartRecipeSerializer)
-from users.models import User
 from .mixins import ListViewSet
 from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
 from .filters import IngredientSearchFilter, RecipeFilter
@@ -117,9 +118,9 @@ class RecipeViewset(viewsets.ModelViewSet):
             unit = ingredient['ingredient__measurement_unit']
             amount = ingredient['ingredient_amount']
             shopping_list.append(f'\n{name} - {amount}, {unit}')
+        filename = f'{request.user.username}_shopping_list.txt'
         response = HttpResponse(shopping_list, content_type='text/plain')
-        response['Content-Disposition'] = 'attachment; \
-            filename="shopping-list.txt"'
+        response['Content-Disposition'] = f'attachment; filename={filename}'
         return response
 
 
