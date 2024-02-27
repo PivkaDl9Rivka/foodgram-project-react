@@ -26,7 +26,7 @@ services:
       - ./.env
 
   frontend:
-    image: foxa26/frontend_foodgram
+    image: foxa26/foodgram_frontend
     volumes:
       - ../frontend/:/app/result_build/
 
