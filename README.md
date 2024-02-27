@@ -1,5 +1,5 @@
 ## FoodGram - Продуктовый помощник
-![Результат выполнения workflows](https://github.com/PivkaDl9Rivka/foodgram-project-react/actions/workflows/master.yml/badge.svg)
+![Результат выполнения workflows](https://github.com/PivkaDl9Rivka/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg)
 ### Описание:
 В FoodGram пользователи могут создавать свои рецепты, подписываться на рецепты других пользователей, добавлять понравившиеся рецепты в Избранное, а также есть возможность скачать список необходимых продуктов для приготовления одного или нескольких желаемых блюд.
 ### Технологии :
