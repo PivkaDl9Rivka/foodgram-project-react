@@ -80,7 +80,7 @@ jobs:
           sudo docker compose -f docker-compose.production.yml exec backend python manage.py load_tags
           sudo docker compose -f docker-compose.production.yml exec backend python manage.py load_ingredients
           sudo docker compose -f docker-compose.production.yml exec backend python manage.py collectstatic
-          sudo docker compose -f docker-compose.production.yml exec backend cp -r /app/backend_static/. /backend_static/
+          sudo docker compose -f docker-compose.production.yml exec backend cp -r /app/collected_static/. /backend_static/static/
 
   send_message_to_telegramm:
     runs-on: ubuntu-latest
