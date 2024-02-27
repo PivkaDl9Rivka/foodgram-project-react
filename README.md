@@ -3,11 +3,13 @@
 ### Описание:
 В FoodGram пользователи могут создавать свои рецепты, подписываться на рецепты других пользователей, добавлять понравившиеся рецепты в Избранное, а также есть возможность скачать список необходимых продуктов для приготовления одного или нескольких желаемых блюд.
 ### Технологии :
-Python Django DjangoREST Docker Nginx Gunicorn PostgreSQL
-### Функционал:
-* Реализовано REST API
-* Работа API совместно с фронтендом разработанном на технологии React
-* Поддерживает методы GET, POST, PUT, PATCH, DELETE
+* Python
+* Django
+* DjangoREST  
+* Gunicorn
+* PostgreSQL
+* Nginx
+* Docker
 ### Как запустить проект:
 1. Склонировать репозиторий в командной строке:
 ```bash
@@ -23,7 +25,7 @@ DB_ENGINE=django.db.backends.postgresql
 DB_NAME=postgres
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=<ваш_пароль>
-DB_HOST=db
+DB_HOST=foodgram_db
 DB_PORT=5432
 SECRET_KEY=<секретный_ключ_проекта>
 ```
@@ -52,8 +54,7 @@ docker-compose  exec  web  python  manage.py  load_ingredients
 ```
 
 Рабочий проект развёрнут по адресу `http://foodgramforall.ddns.net/`:
-- http://foodgramforall.ddns.net/admin/ - админ-зона.
-- http://foodgramforall.ddns.net/redoc/ - документация к API.
+- http://foodgramforall.ddns.net/admin/ - админка.
 
 ### Автор:
 Паранин Максим
