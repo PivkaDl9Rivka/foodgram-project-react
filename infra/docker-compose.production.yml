@@ -7,7 +7,7 @@ volumes:
 
 services:
   frontend:
-    image: foxa26/frontend_foodgram
+    image: foxa26/foodgram_frontend
     env_file: .env
     command: cp -r /app/build/. /frontend_static/
     volumes:
