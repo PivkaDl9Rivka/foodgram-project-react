@@ -1,44 +1,38 @@
-  GNU nano 6.2                                      docker-compose.production.yml
 version: '3.3'
+
 volumes:
-  postgres_data:
-  static_value:
-  media_value:
+  foodgram_pg_data:
+  static:
+  media:
 
 services:
+  foodgram_db:
+    image: postgres:13
+    env_file: .env
+    volumes:
+      - foodgram_pg_data:/var/lib/postgresql/data
+
+  backend:
+    image: foxa26/foodgram_backend
+    env_file: .env
+    volumes:
+      - static:/backend_static
+      - media:/app/media
+    depends_on:
+      - foodgram_db
+
   frontend:
     image: foxa26/foodgram_frontend
     env_file: .env
     command: cp -r /app/build/. /frontend_static/
     volumes:
-      - static_value:/app/result_build/
-
-  db:
-    image: postgres:13
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    depends_on:
-      - frontend
-    env_file:
-      - .env
-
-  backend:
-    image: foxa26/foodgram_backend
-    restart: always
-    volumes:
-      - static_value:/backend_static
-      - media_value:/backend_media
-    depends_on:
-      - db
-    env_file:
-      - .env
+      - static:/frontend_static
 
   nginx:
     image: foxa26/foodgram_gateway
+    env_file: .env
     ports:
       - "8000:80"
     volumes:
-      - static_value:/backend_static
-      - media_value:/backend_media
-    depends_on:
-      - backend
+      - static:/staticfiles/
+      - media:/media
