@@ -1,7 +1,10 @@
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
 from users.models import User
+
+MIN_COOKING_TIME_AND_AMOUNT_INGREDIENT = 1
+MAX_COOKING_TIME_AND_AMOUNT_INGREDIENT = 32000
 
 
 class Ingredient(models.Model):
@@ -76,12 +79,16 @@ class Recipe(models.Model):
         verbose_name='Тег рецепта',
         related_name='recipes',
     )
-    cooking_time = models.IntegerField(
+    cooking_time = models.PositiveSmallIntegerField(
         verbose_name='Время приготовления',
         validators=[
             MinValueValidator(
-                1,
+                MIN_COOKING_TIME_AND_AMOUNT_INGREDIENT,
                 message='Время приготовления минимум 1 минута'
+            ),
+            MaxValueValidator(
+                MAX_COOKING_TIME_AND_AMOUNT_INGREDIENT,
+                message='Время приготовления максимум 32000 минуты'
             )
         ],
     )
@@ -100,11 +107,16 @@ class Recipe(models.Model):
 
 
 class RecipeIngredient(models.Model):
-    amount = models.IntegerField(
+    amount = models.PositiveSmallIntegerField(
         verbose_name='Количество',
         validators=[
             MinValueValidator(
-                1, message='Минимальное количество не меньше чем 1'
+                MIN_COOKING_TIME_AND_AMOUNT_INGREDIENT,
+                message='Минимальное количество не меньше чем 1'
+            ),
+            MaxValueValidator(
+                MAX_COOKING_TIME_AND_AMOUNT_INGREDIENT,
+                message='Максимальное количество не более 32000'
             )
         ],
     )
@@ -122,6 +134,7 @@ class RecipeIngredient(models.Model):
     )
 
     class Meta:
+        ordering = ('id',)
         verbose_name = 'Ингредиент в рецепте'
         verbose_name_plural = 'Ингредиенты в рецептах'
         constraints = [
@@ -176,6 +189,7 @@ class Favorite(models.Model):
     )
 
     class Meta:
+        ordering = ('id',)
         constraints = [
             models.UniqueConstraint(
                 fields=('user', 'recipe',),
@@ -201,6 +215,7 @@ class ShoppingCart(models.Model):
     )
 
     class Meta:
+        ordering = ('id',)
         constraints = [
             models.UniqueConstraint(
                 fields=('user', 'recipe',),

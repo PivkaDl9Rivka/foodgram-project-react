@@ -8,7 +8,7 @@ from users.models import User
 
 
 class CustomUserSerializer(UserSerializer):
-    '''Сериализатор пользователей.'''
+    """Сериализатор пользователей."""
 
     is_subscribed = serializers.SerializerMethodField()
 
@@ -24,14 +24,15 @@ class CustomUserSerializer(UserSerializer):
                   )
 
     def get_is_subscribed(self, obj):
-        user = self.context.get('request').user
+        user = self.context['request'].user
         if user.is_anonymous:
             return False
+        
         return Subscribe.objects.filter(user=user, author=obj).exists()
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):
-    '''Сериализатор новых пользователей.'''
+    """Сериализатор новых пользователей."""
 
     class Meta:
         model = User
@@ -46,7 +47,7 @@ class CustomUserCreateSerializer(UserCreateSerializer):
 
 
 class TagSerializer(serializers.ModelSerializer):
-    '''Сериализатор тегов.'''
+    """Сериализатор тегов."""
 
     class Meta:
         model = Tag
@@ -54,7 +55,7 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class IngredientSerializer(serializers.ModelSerializer):
-    '''Сериализатор ингредиентов.'''
+    """Сериализатор ингредиентов."""
 
     class Meta:
         model = Ingredient
@@ -62,7 +63,7 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 
 class RecipeIngredientsSerializer(serializers.ModelSerializer):
-    '''Сериализатор игредиентов в рецептах.'''
+    """Сериализатор игредиентов в рецептах."""
 
     name = serializers.StringRelatedField(
         source='ingredient.name'
@@ -81,7 +82,7 @@ class RecipeIngredientsSerializer(serializers.ModelSerializer):
 
 
 class RecipeListSerializer(serializers.ModelSerializer):
-    '''Сериализатор списка рецептов.'''
+    """Сериализатор списка рецептов."""
 
     author = CustomUserSerializer(read_only=True)
     ingredients = RecipeIngredientsSerializer(
@@ -112,7 +113,7 @@ class RecipeListSerializer(serializers.ModelSerializer):
 
 
 class CreateIngredientSerializer(serializers.ModelSerializer):
-    '''Сериализатор ингредиентов, для создания пользователем рецепта.'''
+    """Сериализатор ингредиентов, для создания пользователем рецепта."""
 
     id = serializers.IntegerField()
     recipe = serializers.PrimaryKeyRelatedField(read_only=True)
@@ -124,7 +125,7 @@ class CreateIngredientSerializer(serializers.ModelSerializer):
 
 
 class RecipeCreateSerializer(serializers.ModelSerializer):
-    '''Сериализатор создания рецепта.'''
+    """Сериализатор создания рецепта."""
 
     author = CustomUserSerializer(read_only=True)
     image = Base64ImageField()
@@ -199,7 +200,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
 
 
 class SubscribeRecipeSerializer(serializers.ModelSerializer):
-    '''Сериализатор отображения информации рецепта в подписке.'''
+    """Сериализатор отображения информации рецепта в подписке."""
 
     class Meta:
         model = Recipe
@@ -207,7 +208,7 @@ class SubscribeRecipeSerializer(serializers.ModelSerializer):
 
 
 class SubscribeSerializer(serializers.ModelSerializer):
-    '''Сериализатор отображения списка подписок.'''
+    """Сериализатор отображения списка подписок."""
 
     id = serializers.ReadOnlyField(source='author.id')
     username = serializers.ReadOnlyField(source='author.username')
@@ -240,7 +241,7 @@ class SubscribeSerializer(serializers.ModelSerializer):
 
 
 class SubscribeUserSerializer(serializers.ModelSerializer):
-    '''Сериализатор создания/отмены подписки на пользователя.'''
+    """Сериализатор создания/отмены подписки на пользователя."""
 
     class Meta:
         model = Subscribe
@@ -269,7 +270,7 @@ class SubscribeUserSerializer(serializers.ModelSerializer):
 
 
 class ShoppingCartRecipeSerializer(serializers.ModelSerializer):
-    '''Сериализатор отображения рецептов в подписке.'''
+    """Сериализатор отображения рецептов в подписке."""
 
     class Meta:
         model = Recipe

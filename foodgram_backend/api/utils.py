@@ -9,7 +9,7 @@ def post(request, pk, model, serializer):
     recipe = get_object_or_404(Recipe, pk=pk)
     if model.objects.filter(user=request.user, recipe=recipe).exists():
         return Response(
-            {'errors': 'Рецепт уже есть в избранном/списке покупок'},
+            {'Notification': 'Рецепт уже есть в избранном/списке покупок'},
             status=status.HTTP_400_BAD_REQUEST,
         )
     model.objects.get_or_create(user=request.user, recipe=recipe)
@@ -19,14 +19,11 @@ def post(request, pk, model, serializer):
 
 def delete(request, pk, models):
     obj = get_object_or_404(Recipe, pk=pk)
-    if not models.objects.filter(
-        recipe=obj, user=request.user
-    ).exists():
+    needed_recipe = models.objects.filter(recipe=obj, user=request.user)
+    if not needed_recipe.exists():
         return Response(
             {'Notification':
                 f'Вы не добавляли рецепт {obj}.'}
         )
-    models.objects.filter(
-        recipe=obj, user=request.user
-    ).delete()
+    needed_recipe.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)

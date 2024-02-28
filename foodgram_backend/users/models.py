@@ -12,7 +12,6 @@ class User(AbstractUser):
         blank=False,
         null=False,
     )
-
     username = models.CharField(
         'Логин',
         max_length=150,
