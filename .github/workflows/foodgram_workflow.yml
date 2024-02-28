@@ -41,43 +41,46 @@ jobs:
     - name: Push to DockerHub backend
       uses: docker/build-push-action@v4
       with:
-        context: ./backend/
+        context: ./foodgram_backend/
         push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_backend:latest
+        tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_backend
     - name: Push to Docker Hub frontend
       uses: docker/build-push-action@v3
       with:
         context: ./frontend/
         push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend:latest
+        tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend
     - name: Push to Docker Hub gateway
       uses: docker/build-push-action@v3
       with:
         context: ./infra/
         push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_gateway:latest
+        tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_gateway
 
   deploy:
     runs-on: ubuntu-latest
     needs: build_and_push_to_docker_hub
     if: github.ref == 'refs/heads/master'
     steps:
-      - name: executing remote ssh commands to deploy
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER }}
-          key: ${{ secrets.SSH_KEY }}
-          passphrase: ${{ secrets.PASSPHRASE }}
-          script: |
-            cd foodgram/
-            sudo docker compose -f docker-compose.production.yml pull
-            sudo docker compose -f docker-compose.production.yml down
-            sudo docker compose -f docker-compose.production.yml up -d
-            sudo docker compose -f docker-compose.production.yml exec backend python manage.py migrate
-            sudo docker compose -f docker-compose.production.yml exec backend python manage.py import_csv
-            sudo docker compose -f docker-compose.production.yml exec backend python manage.py collectstatic
-            sudo docker compose -f docker-compose.production.yml exec backend cp -r /app/collected_static/. /backend_static/static/
+    - name: Checkout repo
+      uses: actions/checkout@v3    
+    - name: Executing remote ssh commands to deploy
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USER }}
+        key: ${{ secrets.SSH_KEY }}
+        passphrase: ${{ secrets.PASSPHRASE }}
+        script: |
+          cd foodgram/
+          sudo docker compose -f docker-compose.production.yml pull
+          sudo docker compose -f docker-compose.production.yml down
+          sudo docker compose -f docker-compose.production.yml up -d
+          sudo docker compose -f docker-compose.production.yml exec backend python manage.py migrate
+          sudo docker compose -f docker-compose.production.yml exec backend python manage.py load_tags
+          sudo docker compose -f docker-compose.production.yml exec backend python manage.py load_ingredients
+          sudo docker compose -f docker-compose.production.yml exec backend python manage.py collectstatic
+          sudo docker compose -f docker-compose.production.yml exec backend cp -r /app/collected_static/. /backend_static/static/
 
   send_message_to_telegramm:
     runs-on: ubuntu-latest

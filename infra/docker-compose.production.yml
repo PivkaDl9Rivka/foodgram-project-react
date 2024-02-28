@@ -1,52 +1,38 @@
 version: '3.3'
+
 volumes:
-  postgres_data:
-  static_value:
-  media_value:
+  foodgram_pg_data:
+  static:
+  media:
 
 services:
-  db:
-      image: postgres:13
-      volumes:
-        - /var/lib/postgresql/data/
-      depends_on:
-        - frontend
-      env_file:
-        - ./.env
+  foodgram_db:
+    image: postgres:13
+    env_file: .env
+    volumes:
+      - foodgram_pg_data:/var/lib/postgresql/data
 
   backend:
     image: foxa26/foodgram_backend
-    restart: always
+    env_file: .env
     volumes:
-      - static_value:/app/backend_static/
-      - media_value:/app/backend_media/
+      - static:/backend_static
+      - media:/app/media
     depends_on:
-      - db
-    env_file:
-      - ./.env
+      - foodgram_db
 
   frontend:
-    image: foxa26/frontend_foodgram
-    volumes:
-      - ../frontend/:/app/result_build/
-
-  nginx:
-    image: foxa26/foodgram_gateway
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
-      - ../frontend/build:/usr/share/nginx/html/
-      - ./docs:/usr/share/nginx/html/api/docs/
-      - static_value:/var/html/backend_static/
-      - media_value:/var/html/backend_media/
-    depends_on:
-      - backend
-
-
-frontend:
-    env_file: .env
     image: foxa26/foodgram_frontend
+    env_file: .env
     command: cp -r /app/build/. /frontend_static/
     volumes:
       - static:/frontend_static
+
+  nginx:
+    image: foxa26/foodgram_gateway
+    env_file: .env
+    ports:
+      - "8000:80"
+    volumes:
+      - static:/staticfiles/
+      - media:/media
