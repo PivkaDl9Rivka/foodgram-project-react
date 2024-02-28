@@ -3,6 +3,8 @@ from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 
+from foodgram_backend.settings import (MAX_COOKING_TIME_AND_AMOUNT_INGREDIENT,
+                                       MIN_COOKING_TIME_AND_AMOUNT_INGREDIENT)
 from recipes.models import Subscribe, Ingredient, Recipe, RecipeIngredient, Tag
 from users.models import User
 
@@ -27,8 +29,7 @@ class CustomUserSerializer(UserSerializer):
         user = self.context['request'].user
         if user.is_anonymous:
             return False
-        
-        return Subscribe.objects.filter(user=user, author=obj).exists()
+        return obj.subscriber.filter(user=user).exists()
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):
@@ -117,7 +118,11 @@ class CreateIngredientSerializer(serializers.ModelSerializer):
 
     id = serializers.IntegerField()
     recipe = serializers.PrimaryKeyRelatedField(read_only=True)
-    amount = serializers.IntegerField(write_only=True, min_value=1)
+    amount = serializers.IntegerField(
+        write_only=True,
+        min_value=MIN_COOKING_TIME_AND_AMOUNT_INGREDIENT,
+        max_value=MAX_COOKING_TIME_AND_AMOUNT_INGREDIENT
+    )
 
     class Meta:
         model = RecipeIngredient
@@ -130,6 +135,11 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
     author = CustomUserSerializer(read_only=True)
     image = Base64ImageField()
     ingredients = CreateIngredientSerializer(many=True)
+    cooking_time = serializers.IntegerField(
+        write_only=True,
+        min_value=MIN_COOKING_TIME_AND_AMOUNT_INGREDIENT,
+        max_value=MAX_COOKING_TIME_AND_AMOUNT_INGREDIENT
+    )
 
     class Meta:
         model = Recipe
@@ -155,8 +165,8 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         create_ingredients = [
             RecipeIngredient(
                 recipe=recipe,
-                ingredient_id=ingredient.get('id'),
-                amount=ingredient.get('amount')
+                ingredient_id=ingredient['id'],
+                amount=ingredient['amount']
             )
             for ingredient in ingredients
         ]
@@ -194,7 +204,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         self.fields.pop('ingredients')
         representation = super().to_representation(obj)
         representation['ingredients'] = RecipeIngredientsSerializer(
-            RecipeIngredient.objects.filter(recipe=obj).all(), many=True
+            obj.ingredient.all(), many=True
         ).data
         return representation
 
@@ -227,17 +237,16 @@ class SubscribeSerializer(serializers.ModelSerializer):
         )
 
     def get_is_subscribed(self, obj):
-        return Subscribe.objects.filter(
-            author=obj.author,
-            user=obj.user,
-        ).exists()
+        return obj.author.subscriber.filter(user=obj.user).exists()
 
     def get_recipes(self, obj):
-        queryset = Recipe.objects.filter(author=obj.author)
-        return SubscribeRecipeSerializer(queryset, many=True).data
+        return SubscribeRecipeSerializer(
+            obj.author.recipes.all(),
+            many=True
+        ).data
 
     def get_recipes_count(self, obj):
-        return Recipe.objects.filter(author=obj.author).count()
+        return obj.author.recipes.count()
 
 
 class SubscribeUserSerializer(serializers.ModelSerializer):

@@ -1,10 +1,9 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
+from foodgram_backend.settings import (MAX_COOKING_TIME_AND_AMOUNT_INGREDIENT,
+                                       MIN_COOKING_TIME_AND_AMOUNT_INGREDIENT)
 from users.models import User
-
-MIN_COOKING_TIME_AND_AMOUNT_INGREDIENT = 1
-MAX_COOKING_TIME_AND_AMOUNT_INGREDIENT = 32000
 
 
 class Ingredient(models.Model):

@@ -53,14 +53,16 @@ class RecipeViewset(viewsets.ModelViewSet):
     permission_classes = (IsAuthorOrReadOnly | IsAdminOrReadOnly,)
 
     def get_queryset(self):
+        user = self.request.user
+        queryset = super().get_queryset()
         is_favorited = self.request.query_params.get('is_favorited')
         if is_favorited:
-            return Recipe.objects.filter(favorites__user=self.request.user)
+            return queryset.filter(favorites__user=user)
         is_in_shopping_cart = self.request.query_params.get(
             'is_in_shopping_cart')
         if is_in_shopping_cart:
-            return Recipe.objects.filter(shopping__user=self.request.user)
-        return Recipe.objects.all()
+            return queryset.filter(shopping__user=user)
+        return queryset
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
@@ -130,7 +132,8 @@ class SubscriptionsList(ListViewSet):
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        return Subscribe.objects.filter(user=self.request.user)
+        user = self.request.user
+        return user.subscriber.all()
 
 
 class SubscribeView(APIView):

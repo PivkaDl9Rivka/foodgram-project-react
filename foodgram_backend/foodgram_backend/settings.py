@@ -7,7 +7,7 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = os.getenv('SECRET_KEY', '234fsd')
 
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
@@ -100,6 +100,7 @@ USE_L10N = True
 
 USE_TZ = True
 
+
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'collected_static'
 
@@ -131,3 +132,7 @@ DJOSER = {
             "user_list": ["rest_framework.permissions.IsAuthenticatedOrReadOnly"],
     },
 }
+
+
+MIN_COOKING_TIME_AND_AMOUNT_INGREDIENT = 1
+MAX_COOKING_TIME_AND_AMOUNT_INGREDIENT = 32000
