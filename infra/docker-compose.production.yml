@@ -43,3 +43,10 @@ services:
     depends_on:
       - backend
 
+
+frontend:
+    env_file: .env
+    image: foxa26/foodgram_frontend
+    command: cp -r /app/build/. /frontend_static/
+    volumes:
+      - static:/frontend_static
