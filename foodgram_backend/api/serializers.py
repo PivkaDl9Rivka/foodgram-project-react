@@ -3,8 +3,7 @@ from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 
-from foodgram_backend.settings import (MAX_COOKING_TIME_AND_AMOUNT_INGREDIENT,
-                                       MIN_COOKING_TIME_AND_AMOUNT_INGREDIENT)
+from django.conf import settings
 from recipes.models import Subscribe, Ingredient, Recipe, RecipeIngredient, Tag
 from users.models import User
 
@@ -120,8 +119,8 @@ class CreateIngredientSerializer(serializers.ModelSerializer):
     recipe = serializers.PrimaryKeyRelatedField(read_only=True)
     amount = serializers.IntegerField(
         write_only=True,
-        min_value=MIN_COOKING_TIME_AND_AMOUNT_INGREDIENT,
-        max_value=MAX_COOKING_TIME_AND_AMOUNT_INGREDIENT
+        min_value=settings.MIN_COOKING_TIME_AND_AMOUNT_INGREDIENT,
+        max_value=settings.MAX_COOKING_TIME_AND_AMOUNT_INGREDIENT
     )
 
     class Meta:
@@ -137,8 +136,8 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
     ingredients = CreateIngredientSerializer(many=True)
     cooking_time = serializers.IntegerField(
         write_only=True,
-        min_value=MIN_COOKING_TIME_AND_AMOUNT_INGREDIENT,
-        max_value=MAX_COOKING_TIME_AND_AMOUNT_INGREDIENT
+        min_value=settings.MIN_COOKING_TIME_AND_AMOUNT_INGREDIENT,
+        max_value=settings.MAX_COOKING_TIME_AND_AMOUNT_INGREDIENT
     )
 
     class Meta:

@@ -11,7 +11,6 @@ from django.db.models import Sum
 from recipes.models import (Favorite, Subscribe, Ingredient, Recipe,
                             RecipeIngredient, ShoppingCart, Tag)
 from users.models import User
-
 from .serializers import (CustomUserSerializer, IngredientSerializer,
                           RecipeCreateSerializer, RecipeListSerializer,
                           SubscribeRecipeSerializer, SubscribeSerializer,

@@ -1,8 +1,7 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
+from django.conf import settings
 
-from foodgram_backend.settings import (MAX_COOKING_TIME_AND_AMOUNT_INGREDIENT,
-                                       MIN_COOKING_TIME_AND_AMOUNT_INGREDIENT)
 from users.models import User
 
 
@@ -82,11 +81,11 @@ class Recipe(models.Model):
         verbose_name='Время приготовления',
         validators=[
             MinValueValidator(
-                MIN_COOKING_TIME_AND_AMOUNT_INGREDIENT,
+                settings.MIN_COOKING_TIME_AND_AMOUNT_INGREDIENT,
                 message='Время приготовления минимум 1 минута'
             ),
             MaxValueValidator(
-                MAX_COOKING_TIME_AND_AMOUNT_INGREDIENT,
+                settings.MAX_COOKING_TIME_AND_AMOUNT_INGREDIENT,
                 message='Время приготовления максимум 32000 минуты'
             )
         ],
@@ -110,11 +109,11 @@ class RecipeIngredient(models.Model):
         verbose_name='Количество',
         validators=[
             MinValueValidator(
-                MIN_COOKING_TIME_AND_AMOUNT_INGREDIENT,
+                settings.MIN_COOKING_TIME_AND_AMOUNT_INGREDIENT,
                 message='Минимальное количество не меньше чем 1'
             ),
             MaxValueValidator(
-                MAX_COOKING_TIME_AND_AMOUNT_INGREDIENT,
+                settings.MAX_COOKING_TIME_AND_AMOUNT_INGREDIENT,
                 message='Максимальное количество не более 32000'
             )
         ],
